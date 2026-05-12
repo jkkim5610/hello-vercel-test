@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MORAM SPACE — 작업용 설정툴</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500&family=Oswald:wght@300;400;500&family=Raleway:wght@300;400;500&family=Montserrat:wght@300;400;500&family=Playfair+Display:wght@400;500&family=Space+Grotesk:wght@300;400;500&family=DM+Sans:wght@300;400;500&family=Libre+Baskerville:wght@400&family=Cormorant+Garamond:wght@300;400;500&family=Noto+Sans+KR:wght@300;400;500&family=Black+Han+Sans&family=Jua&family=Gugi&family=Do+Hyeon&family=Nanum+Gothic:wght@400;700&family=Nanum+Myeongjo:wght@400;700&family=Gowun+Dodum&family=Gowun+Batang&family=Sunflower:wght@300;500&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; overflow:hidden; font-family:sans-serif; background:#0d0d1a; }
+.workspace { display:flex; height:100vh; width:100%; }
+
+/* 사이드바 */
+.sidebar { width:260px; min-width:260px; height:100vh; background:#111122; border-right:1px solid rgba(255,255,255,0.1); overflow-y:auto; padding:14px 12px; display:flex; flex-direction:column; gap:10px; }
+.sidebar::-webkit-scrollbar { width:4px; }
+.sidebar::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.15); border-radius:2px; }
+.sb-logo { font-size:11px; letter-spacing:0.2em; color:rgba(255,255,255,0.3); padding:4px 0 8px; border-bottom:0.5px solid rgba(255,255,255,0.08); margin-bottom:2px; }
+.sb-sec { background:rgba(255,255,255,0.04); border:0.5px solid rgba(255,255,255,0.08); border-radius:10px; padding:10px 12px; }
+.sb-title { font-size:9px; letter-spacing:0.15em; color:rgba(255,255,255,0.35); margin-bottom:10px; text-transform:uppercase; }
+.view-tabs { display:flex; gap:5px; }
+.view-tab { flex:1; padding:6px 4px; border:0.5px solid rgba(255,255,255,0.12); border-radius:7px; background:transparent; color:rgba(255,255,255,0.45); font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; transition:all 0.2s; }
+.view-tab.active { background:rgba(255,255,255,0.1); color:white; border-color:rgba(255,255,255,0.3); }
+.w-row { display:flex; align-items:center; gap:6px; margin-top:8px; }
+.w-lbl { font-size:10px; color:rgba(255,255,255,0.45); white-space:nowrap; }
+.w-input { width:58px; padding:4px 6px; border:0.5px solid rgba(255,255,255,0.18); border-radius:5px; font-size:11px; color:white; background:rgba(255,255,255,0.07); text-align:center; }
+.w-input:focus { outline:none; border-color:rgba(255,255,255,0.35); }
+.w-unit { font-size:10px; color:rgba(255,255,255,0.35); }
+.presets { display:flex; gap:3px; margin-top:7px; flex-wrap:wrap; }
+.pb { font-size:9px; padding:3px 7px; border:0.5px solid rgba(255,255,255,0.12); border-radius:4px; background:transparent; color:rgba(255,255,255,0.45); cursor:pointer; transition:all 0.15s; }
+.pb:hover { background:rgba(255,255,255,0.08); color:white; }
+.color-row { display:flex; align-items:center; gap:8px; margin-bottom:7px; }
+.color-row:last-of-type { margin-bottom:0; }
+.c-lbl { font-size:10px; color:rgba(255,255,255,0.45); min-width:52px; }
+input[type=color] { width:28px; height:24px; border:0.5px solid rgba(255,255,255,0.18); border-radius:5px; cursor:pointer; padding:2px; background:transparent; }
+.c-hex { font-size:10px; color:rgba(255,255,255,0.3); }
+.reset-btn { font-size:9px; padding:4px 10px; border:0.5px solid rgba(255,255,255,0.15); border-radius:5px; background:transparent; color:rgba(255,255,255,0.45); cursor:pointer; margin-top:8px; display:block; transition:all 0.15s; }
+.reset-btn:hover { background:rgba(255,255,255,0.08); color:white; }
+.badge-row { display:flex; flex-direction:column; gap:5px; margin-bottom:10px; }
+.badge { display:flex; align-items:center; gap:5px; background:rgba(74,222,128,0.06); border:0.5px solid rgba(74,222,128,0.3); border-radius:20px; padding:4px 10px; }
+.badge-type { font-size:8px; color:rgba(255,255,255,0.35); min-width:22px; }
+.badge-check { color:#4ade80; font-size:10px; }
+.badge-name { font-size:10px; color:white; }
+.font-sec-title { font-size:9px; color:rgba(255,255,255,0.35); margin-bottom:5px; margin-top:8px; }
+.font-grid { display:grid; grid-template-columns:1fr 1fr; gap:4px; }
+.font-btn { border:0.5px solid rgba(255,255,255,0.08); border-radius:6px; padding:5px 7px; background:transparent; cursor:pointer; text-align:left; color:white; position:relative; transition:all 0.15s; }
+.font-btn:hover { background:rgba(255,255,255,0.06); border-color:rgba(255,255,255,0.2); }
+.font-btn.active { border-color:#4ade80; background:rgba(74,222,128,0.06); }
+.font-btn .ck { display:none; position:absolute; top:4px; right:5px; color:#4ade80; font-size:10px; }
+.font-btn.active .ck { display:block; }
+.fname { font-size:8px; color:rgba(255,255,255,0.35); margin-bottom:2px; }
+.fpreview { font-size:12px; line-height:1.3; color:rgba(255,255,255,0.9); }
+.export-btn { width:100%; padding:10px; border:0.5px solid rgba(255,255,255,0.2); border-radius:8px; background:rgba(255,255,255,0.06); color:white; font-size:11px; cursor:pointer; letter-spacing:0.05em; transition:all 0.2s; margin-top:2px; }
+.export-btn:hover { background:rgba(255,255,255,0.12); border-color:rgba(255,255,255,0.35); }
+
+/* 미리보기 */
+.preview-area { flex:1; height:100vh; overflow:hidden; display:flex; flex-direction:column; background:#0d0d1a; }
+.preview-topbar { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; border-bottom:0.5px solid rgba(255,255,255,0.06); flex-shrink:0; }
+.preview-label { font-size:10px; color:rgba(255,255,255,0.3); letter-spacing:0.1em; }
+#preview-frame { border:none; display:block; width:100%; flex:1; }
+</style>
+</head>
+<body>
+<div class="workspace">
+
+  <div class="sidebar">
+    <div class="sb-logo">MORAM SPACE · 설정툴</div>
+
+    <div class="sb-sec">
+      <div class="sb-title">뷰 모드 / 콘텐츠 너비</div>
+      <div class="view-tabs">
+        <button class="view-tab active" id="tab-m" onclick="setView('mobile')">📱 모바일</button>
+        <button class="view-tab" id="tab-p" onclick="setView('pc')">🖥 PC</button>
+      </div>
+      <div class="w-row">
+        <span class="w-lbl">콘텐츠 너비</span>
+        <input type="number" class="w-input" id="w-input" value="390" min="320" max="1920" oninput="pushToFrame()">
+        <span class="w-unit">px</span>
+      </div>
+      <div class="presets">
+        <button class="pb" onclick="setWidth(390)">390</button>
+        <button class="pb" onclick="setWidth(768)">768</button>
+        <button class="pb" onclick="setWidth(1280)">1280</button>
+        <button class="pb" onclick="setWidth(1920)">1920</button>
+      </div>
+    </div>
+
+    <div class="sb-sec">
+      <div class="sb-title">컬러</div>
+      <div class="color-row">
+        <span class="c-lbl">짙은 파랑</span>
+        <input type="color" id="c1" value="#191970" oninput="onColorChange('c1')">
+        <span class="c-hex" id="hex-c1">#191970</span>
+      </div>
+      <div class="color-row">
+        <span class="c-lbl">밝은 파랑</span>
+        <input type="color" id="c2" value="#1560bd" oninput="onColorChange('c2')">
+        <span class="c-hex" id="hex-c2">#1560bd</span>
+      </div>
+      <button class="reset-btn" onclick="resetColors()">↺ 초기화</button>
+    </div>
+
+    <div class="sb-sec">
+      <div class="sb-title">폰트</div>
+      <div class="badge-row">
+        <div class="badge"><span class="badge-type">한글</span><span class="badge-check">✓</span><span class="badge-name" id="badge-ko">Noto Sans KR</span></div>
+        <div class="badge"><span class="badge-type">영문</span><span class="badge-check">✓</span><span class="badge-name" id="badge-en">Bebas Neue</span></div>
+      </div>
+      <div class="font-sec-title">한글 폰트</div>
+      <div class="font-grid" id="ko-grid"></div>
+      <div class="font-sec-title">영문 폰트</div>
+      <div class="font-grid" id="en-grid"></div>
+    </div>
+
+    <div class="sb-sec">
+      <div class="sb-title">내보내기</div>
+      <button class="export-btn" onclick="exportHTML()">⬇ 배포용 index.html 다운로드</button>
+    </div>
+  </div>
+
+  <div class="preview-area">
+    <div class="preview-topbar">
+      <span class="preview-label" id="preview-label">📱 모바일 — 콘텐츠 390px</span>
+    </div>
+    <iframe id="preview-frame" scrolling="yes"></iframe>
+  </div>
+
+</div>
+
+<script>
+const koFonts = [
+  {name:'Noto Sans KR',   preview:'모람공간 건축'},
+  {name:'Black Han Sans', preview:'모람공간 건축'},
+  {name:'Jua',            preview:'모람공간 건축'},
+  {name:'Gugi',           preview:'모람공간 건축'},
+  {name:'Do Hyeon',       preview:'모람공간 건축'},
+  {name:'Nanum Gothic',   preview:'모람공간 건축'},
+  {name:'Nanum Myeongjo', preview:'모람공간 건축'},
+  {name:'Gowun Dodum',    preview:'모람공간 건축'},
+  {name:'Gowun Batang',   preview:'모람공간 건축'},
+  {name:'Sunflower',      preview:'모람공간 건축'},
+];
+const enFonts = [
+  {name:'Bebas Neue',         preview:'MORAM SPACE'},
+  {name:'Barlow',             preview:'MORAM SPACE'},
+  {name:'Oswald',             preview:'MORAM SPACE'},
+  {name:'Raleway',            preview:'MORAM SPACE'},
+  {name:'Montserrat',         preview:'MORAM SPACE'},
+  {name:'Playfair Display',   preview:'MORAM SPACE'},
+  {name:'Space Grotesk',      preview:'MORAM SPACE'},
+  {name:'DM Sans',            preview:'MORAM SPACE'},
+  {name:'Libre Baskerville',  preview:'MORAM SPACE'},
+  {name:'Cormorant Garamond', preview:'MORAM SPACE'},
+];
+let curKo = 'Noto Sans KR';
+let curEn = 'Bebas Neue';
+
+function buildGrid(fonts, id, type) {
+  const g = document.getElementById(id);
+  fonts.forEach(f => {
+    const b = document.createElement('button');
+    b.className = 'font-btn' + (f.name === (type==='ko' ? curKo : curEn) ? ' active' : '');
+    b.innerHTML = `<span class="ck">✓</span><div class="fname">${f.name}</div><div class="fpreview" style="font-family:'${f.name}',sans-serif;">${f.preview}</div>`;
+    b.onclick = () => selectFont(f.name, type, id);
+    g.appendChild(b);
+  });
+}
+
+function selectFont(name, type, id) {
+  if (type === 'ko') { curKo = name; document.getElementById('badge-ko').textContent = name; }
+  else               { curEn = name; document.getElementById('badge-en').textContent = name; }
+  document.querySelectorAll('#' + id + ' .font-btn').forEach((b, i) => {
+    const list = type === 'ko' ? koFonts : enFonts;
+    b.classList.toggle('active', list[i].name === name);
+  });
+  pushToFrame();
+}
+
+function setView(v) {
+  document.getElementById('tab-m').classList.toggle('active', v === 'mobile');
+  document.getElementById('tab-p').classList.toggle('active', v === 'pc');
+  setWidth(v === 'mobile' ? 390 : 1280);
+}
+
+function setWidth(w) {
+  document.getElementById('w-input').value = w;
+  pushToFrame();
+}
+
+function onColorChange(id) {
+  document.getElementById('hex-' + id).textContent = document.getElementById(id).value;
+  pushToFrame();
+}
+
+function resetColors() {
+  document.getElementById('c1').value = '#191970';
+  document.getElementById('c2').value = '#1560bd';
+  document.getElementById('hex-c1').textContent = '#191970';
+  document.getElementById('hex-c2').textContent = '#1560bd';
+  pushToFrame();
+}
+
+function getHTML() {
+  const c1  = document.getElementById('c1').value;
+  const c2  = document.getElementById('c2').value;
+  const w   = parseInt(document.getElementById('w-input').value) || 390;
+  const isPC = w >= 768;
+
+  function hexToRgb(h) {
+    return { r:parseInt(h.slice(1,3),16), g:parseInt(h.slice(3,5),16), b:parseInt(h.slice(5,7),16) };
+  }
+  const {r,g,b} = hexToRgb(c1);
+
+  const navPad      = isPC ? '16px 48px' : '12px 20px';
+  const navFS       = isPC ? '18px' : '14px';
+  const linkFS      = isPC ? '13px' : '10px';
+  const linkGap     = isPC ? '28px' : '14px';
+  const heroMaxH    = isPC ? '640px' : '280px';
+  const heroGap     = isPC ? '14px' : '8px';
+  const heroSubFS   = isPC ? '11px' : '8px';
+  const heroLineW   = isPC ? '60px' : '40px';
+  const secPad      = isPC ? '60px 48px' : '28px 20px';
+  const titleFS     = isPC ? '44px' : '24px';
+  const titleMB     = isPC ? '32px' : '16px';
+  const aboutCols   = isPC ? '1fr 1fr' : '1fr';
+  const aboutGap    = isPC ? '40px' : '16px';
+  const aboutImgH   = isPC ? '280px' : '180px';
+  const aboutTextFS = isPC ? '15px' : '12px';
+  const svcCols     = isPC ? 'repeat(5,1fr)' : 'repeat(3,1fr)';
+  const svcPad      = isPC ? '24px 8px' : '12px 4px';
+  const svcFS       = isPC ? '13px' : '10px';
+  const svcIconFS   = isPC ? '24px' : '16px';
+  const svcIconMB   = isPC ? '10px' : '6px';
+  const projCols    = isPC ? 'repeat(3,1fr)' : 'repeat(2,1fr)';
+  const projH       = isPC ? '200px' : '100px';
+  const projLabelFS = isPC ? '14px' : '11px';
+  const contactFS   = isPC ? '15px' : '12px';
+  const contactGap  = isPC ? '12px' : '8px';
+  const showLinks   = isPC ? 'flex' : 'none';
+  const showHam     = isPC ? 'none' : 'flex';
+
+  document.getElementById('preview-label').textContent =
+    (isPC ? '🖥 PC' : '📱 모바일') + ' — 콘텐츠 ' + w + 'px';
+
+  return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MORAM SPACE</title>
+<link href="https://fonts.googleapis.com/css2?family=${curEn.replace(/ /g,'+')}&family=${curKo.replace(/ /g,'+')}:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:${c1};color:white;font-family:'${curKo}',sans-serif;}
+
+/* NAV: 배경 전체 너비, 내부 콘텐츠 ${w}px 고정 */
+.nav-wrap{position:sticky;top:0;z-index:100;background:rgba(${r},${g},${b},0.93);border-bottom:0.5px solid rgba(255,255,255,0.12);}
+.nav{display:flex;justify-content:space-between;align-items:center;max-width:${w}px;margin:0 auto;padding:${navPad};}
+.logo{font-family:'${curEn}',sans-serif;font-size:${navFS};letter-spacing:0.3em;font-weight:400;}
+.nav-links{display:${showLinks};gap:${linkGap};}
+.nav-links a{color:rgba(255,255,255,0.82);text-decoration:none;font-size:${linkFS};letter-spacing:0.08em;cursor:pointer;padding:3px 5px;border-radius:4px;transition:background 0.2s;}
+.nav-links a:hover{background:rgba(255,255,255,0.1);}
+.hamburger{display:${showHam};flex-direction:column;gap:5px;cursor:pointer;padding:4px;}
+.hamburger span{width:22px;height:1.5px;background:white;border-radius:2px;}
+.mobile-menu{display:none;flex-direction:row;background:rgba(${r},${g},${b},0.97);border-top:0.5px solid rgba(255,255,255,0.1);}
+.mobile-menu.open{display:flex;}
+.mobile-menu a{flex:1;color:rgba(255,255,255,0.82);text-decoration:none;font-size:11px;padding:14px 4px;text-align:center;cursor:pointer;letter-spacing:0.05em;border-right:0.5px solid rgba(255,255,255,0.07);}
+.mobile-menu a:last-child{border-right:none;}
+.mobile-menu a:hover{background:rgba(255,255,255,0.07);}
+
+/* HERO: 배경 전체 너비, 내부 콘텐츠 ${w}px 고정 */
+.hero{width:100%;max-height:${heroMaxH};height:100vh;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(to bottom,rgba(${r},${g},${b},0.5),rgba(${r},${g},${b},0.82)),
+  url('https://images.unsplash.com/photo-1517154421773-0529f29ea451?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;}
+.hero-inner{max-width:${w}px;width:100%;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:${heroGap};padding:0 20px;text-align:center;}
+.hero-sub{font-family:'${curEn}',sans-serif;font-size:${heroSubFS};letter-spacing:0.4em;color:#a8c4e8;}
+.hero-title{font-family:'${curEn}',sans-serif;font-size:clamp(28px,6vw,90px);letter-spacing:0.18em;font-weight:400;line-height:1;}
+.hero-line{width:${heroLineW};height:0.5px;background:rgba(255,255,255,0.5);}
+.hero-desc{font-size:clamp(12px,1.8vw,18px);font-weight:300;color:rgba(255,255,255,0.88);line-height:1.9;}
+
+/* STRIPE: 배경 전체 너비 */
+.stripe-dark{background:${c1};width:100%;}
+.stripe-mid{background:${c2};width:100%;}
+
+/* INNER: 콘텐츠 ${w}px 고정, 양쪽은 배경색으로 채워짐 */
+.inner{max-width:${w}px;margin:0 auto;padding:${secPad};}
+.sec-title{font-family:'${curEn}',sans-serif;font-size:${titleFS};letter-spacing:0.12em;font-weight:400;margin-bottom:${titleMB};}
+
+.about-grid{display:grid;grid-template-columns:${aboutCols};gap:${aboutGap};align-items:center;}
+.about-text{font-size:${aboutTextFS};line-height:2;color:rgba(255,255,255,0.72);}
+.about-img{border-radius:12px;overflow:hidden;height:${aboutImgH};}
+.about-img img{width:100%;height:100%;object-fit:cover;display:block;}
+
+.svc-grid{display:grid;grid-template-columns:${svcCols};gap:${isPC?'12px':'7px'};}
+.svc-card{border:0.5px solid rgba(255,255,255,0.15);border-radius:12px;padding:${svcPad};text-align:center;font-size:${svcFS};cursor:pointer;transition:background 0.2s,transform 0.2s;}
+.svc-card:hover{background:rgba(255,255,255,0.1);transform:translateY(-4px);}
+.svc-icon{font-size:${svcIconFS};display:block;margin-bottom:${svcIconMB};color:rgba(255,255,255,0.7);}
+
+.proj-grid{display:grid;grid-template-columns:${projCols};gap:${isPC?'14px':'8px'};}
+.proj-card{border-radius:10px;overflow:hidden;position:relative;height:${projH};cursor:pointer;}
+.proj-card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.5s;}
+.proj-card:hover img{transform:scale(1.05);}
+.proj-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.75),rgba(0,0,0,0.1));display:flex;align-items:flex-end;padding:10px;}
+.proj-label{font-size:${projLabelFS};}
+.proj-sub{font-size:${isPC?'10px':'9px'};color:#a8c4e8;letter-spacing:0.08em;}
+
+.contact-inner{text-align:center;}
+.contact-info{display:flex;flex-direction:column;gap:${contactGap};font-size:${contactFS};color:rgba(255,255,255,0.78);margin-top:8px;}
+.contact-row{display:flex;align-items:center;justify-content:center;gap:8px;}
+
+.overlay{display:none;position:fixed;inset:0;background:rgba(${r},${g},${b},0.97);flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;z-index:200;}
+.overlay.on{display:flex;}
+.ov-label{font-size:11px;color:rgba(255,255,255,0.45);letter-spacing:0.15em;}
+.ov-title{font-family:'${curEn}',sans-serif;font-size:36px;letter-spacing:0.2em;}
+.ov-badge{background:rgba(255,255,255,0.08);border:0.5px solid rgba(255,255,255,0.2);border-radius:20px;padding:6px 18px;font-size:13px;color:rgba(255,255,255,0.6);}
+.ov-back{margin-top:4px;padding:8px 22px;border:0.5px solid rgba(255,255,255,0.3);border-radius:6px;background:transparent;color:white;font-size:12px;cursor:pointer;transition:background 0.2s;}
+.ov-back:hover{background:rgba(255,255,255,0.1);}
+</style>
+</head>
+<body>
+<div class="nav-wrap">
+  <div class="nav">
+    <div class="logo">MORAM SPACE</div>
+    <nav class="nav-links">
+      <a onclick="showOv('About')">About</a>
+      <a onclick="showOv('Service')">Service</a>
+      <a onclick="showOv('Projects')">Projects</a>
+      <a onclick="showOv('Contact')">Contact</a>
+    </nav>
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+  <nav class="mobile-menu" id="mobile-menu">
+    <a onclick="showOv('About');toggleMenu()">About</a>
+    <a onclick="showOv('Service');toggleMenu()">Service</a>
+    <a onclick="showOv('Projects');toggleMenu()">Projects</a>
+    <a onclick="showOv('Contact');toggleMenu()">Contact</a>
+  </nav>
+</div>
+<div class="hero">
+  <div class="hero-inner">
+    <p class="hero-sub">ARCHITECTURE · CONSTRUCTION · CONSULTING</p>
+    <h1 class="hero-title">MORAM SPACE</h1>
+    <div class="hero-line"></div>
+    <p class="hero-desc">사람이 모여 공간을 만들고,<br>공간이 다시 사람을 잇다</p>
+  </div>
+</div>
+<div class="stripe-dark"><div class="inner">
+  <h2 class="sec-title">About Us</h2>
+  <div class="about-grid">
+    <p class="about-text">건축은 사람으로 시작해 사람으로 완성됩니다.<br>모람공간은 건축주, 설계자, 시공자,<br>작업자 모두가 행복한 과정 속에서<br>가장 올바른 건축이 만들어진다고 믿습니다.</p>
+    <div class="about-img"><img src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=800&auto=format&fit=crop" alt="건축 이미지"></div>
+  </div>
+</div></div>
+<div class="stripe-mid"><div class="inner">
+  <h2 class="sec-title">Our Service</h2>
+  <div class="svc-grid">
+    <div class="svc-card" onclick="showOv('철거')"><i class="ti ti-bulldozer svc-icon"></i>철거</div>
+    <div class="svc-card" onclick="showOv('토목')"><i class="ti ti-road svc-icon"></i>토목</div>
+    <div class="svc-card" onclick="showOv('신축')"><i class="ti ti-building svc-icon"></i>신축</div>
+    <div class="svc-card" onclick="showOv('인테리어 리모델링')"><i class="ti ti-paint svc-icon"></i>인테리어 리모델링</div>
+    <div class="svc-card" onclick="showOv('건축 컨설팅')"><i class="ti ti-clipboard-list svc-icon"></i>건축 컨설팅</div>
+  </div>
+</div></div>
+<div class="stripe-dark"><div class="inner">
+  <h2 class="sec-title">Selected Projects</h2>
+  <div class="proj-grid">
+    <div class="proj-card" onclick="showOv('전원주택')"><img src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?q=80&w=600&auto=format&fit=crop" alt="전원주택"><div class="proj-ov"><div><div class="proj-label">전원주택</div><div class="proj-sub">MORAM SPACE PROJECT</div></div></div></div>
+    <div class="proj-card" onclick="showOv('다가구주택')"><img src="https://images.unsplash.com/photo-1460317442991-0ec209397118?q=80&w=600&auto=format&fit=crop" alt="다가구주택"><div class="proj-ov"><div><div class="proj-label">다가구주택</div><div class="proj-sub">MORAM SPACE PROJECT</div></div></div></div>
+    <div class="proj-card" onclick="showOv('근생시설')"><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600&auto=format&fit=crop" alt="근생시설"><div class="proj-ov"><div><div class="proj-label">근생시설</div><div class="proj-sub">MORAM SPACE PROJECT</div></div></div></div>
+    <div class="proj-card" onclick="showOv('한옥')"><img src="https://images.unsplash.com/photo-1517154421773-0529f29ea451?q=80&w=600&auto=format&fit=crop" alt="한옥"><div class="proj-ov"><div><div class="proj-label">한옥</div><div class="proj-sub">MORAM SPACE PROJECT</div></div></div></div>
+    <div class="proj-card" onclick="showOv('공장')"><img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=600&auto=format&fit=crop" alt="공장"><div class="proj-ov"><div><div class="proj-label">공장</div><div class="proj-sub">MORAM SPACE PROJECT</div></div></div></div>
+    <div class="proj-card" onclick="showOv('구조보강')"><img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=600&auto=format&fit=crop" alt="구조보강"><div class="proj-ov"><div><div class="proj-label">구조보강</div><div class="proj-sub">MORAM SPACE PROJECT</div></div></div></div>
+  </div>
+</div></div>
+<div class="stripe-mid"><div class="inner contact-inner">
+  <h2 class="sec-title">Contact</h2>
+  <div class="contact-info">
+    <div class="contact-row"><i class="ti ti-phone"></i><span>010-2860-5380</span></div>
+    <div class="contact-row"><i class="ti ti-map-pin"></i><span>경기도 광명시 시청로 152, 302호</span></div>
+    <div class="contact-row"><i class="ti ti-mail"></i><span>suram.choi@moram.space</span></div>
+    <div class="contact-row"><i class="ti ti-world"></i><span>www.moram.space</span></div>
+  </div>
+</div></div>
+<div class="overlay" id="overlay">
+  <p class="ov-label">MORAM SPACE</p>
+  <div class="ov-title" id="ov-title"></div>
+  <div class="ov-badge">준비 중입니다</div>
+  <p style="font-size:12px;color:rgba(255,255,255,0.4);">페이지를 준비하고 있습니다.</p>
+  <button class="ov-back" onclick="hideOv()">← 메인으로 돌아가기</button>
+</div>
+<script>
+function showOv(n){document.getElementById('ov-title').textContent=n;document.getElementById('overlay').classList.add('on');}
+function hideOv(){document.getElementById('overlay').classList.remove('on');}
+function toggleMenu(){document.getElementById('mobile-menu').classList.toggle('open');}
+<\/script>
+</body></html>`;
+}
+
+function pushToFrame() {
+  document.getElementById('preview-frame').srcdoc = getHTML();
+}
+
+function exportHTML() {
+  const html = getHTML();
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'index.html';
+  a.click();
+}
+
+buildGrid(koFonts, 'ko-grid', 'ko');
+buildGrid(enFonts, 'en-grid', 'en');
+window.addEventListener('load', pushToFrame);
+</script>
+</body>
+</html>
