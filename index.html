@@ -1,11 +1,155 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>Hello Vercel!</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MORAM SPACE</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond&family=Sunflower:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#193b71;color:white;font-family:'Sunflower',sans-serif;}
+
+/* NAV: 배경 전체 너비, 내부 콘텐츠 1280px 고정 */
+.nav-wrap{position:sticky;top:0;z-index:100;background:rgba(25,59,113,0.93);border-bottom:0.5px solid rgba(255,255,255,0.12);}
+.nav{display:flex;justify-content:space-between;align-items:center;max-width:1280px;margin:0 auto;padding:16px 48px;}
+.logo{font-family:'Cormorant Garamond',sans-serif;font-size:18px;letter-spacing:0.3em;font-weight:400;}
+.nav-links{display:flex;gap:28px;}
+.nav-links a{color:rgba(255,255,255,0.82);text-decoration:none;font-size:13px;letter-spacing:0.08em;cursor:pointer;padding:3px 5px;border-radius:4px;transition:background 0.2s;}
+.nav-links a:hover{background:rgba(255,255,255,0.1);}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;}
+.hamburger span{width:22px;height:1.5px;background:white;border-radius:2px;}
+.mobile-menu{display:none;flex-direction:row;background:rgba(25,59,113,0.97);border-top:0.5px solid rgba(255,255,255,0.1);}
+.mobile-menu.open{display:flex;}
+.mobile-menu a{flex:1;color:rgba(255,255,255,0.82);text-decoration:none;font-size:11px;padding:14px 4px;text-align:center;cursor:pointer;letter-spacing:0.05em;border-right:0.5px solid rgba(255,255,255,0.07);}
+.mobile-menu a:last-child{border-right:none;}
+.mobile-menu a:hover{background:rgba(255,255,255,0.07);}
+
+/* HERO: 배경 전체 너비, 내부 콘텐츠 1280px 고정 */
+.hero{width:100%;max-height:640px;height:100vh;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(to bottom,rgba(25,59,113,0.5),rgba(25,59,113,0.82)),
+  url('https://images.unsplash.com/photo-1517154421773-0529f29ea451?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;}
+.hero-inner{max-width:1280px;width:100%;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:14px;padding:0 20px;text-align:center;}
+.hero-sub{font-family:'Cormorant Garamond',sans-serif;font-size:11px;letter-spacing:0.4em;color:#a8c4e8;}
+.hero-title{font-family:'Cormorant Garamond',sans-serif;font-size:clamp(28px,6vw,90px);letter-spacing:0.18em;font-weight:400;line-height:1;}
+.hero-line{width:60px;height:0.5px;background:rgba(255,255,255,0.5);}
+.hero-desc{font-size:clamp(12px,1.8vw,18px);font-weight:300;color:rgba(255,255,255,0.88);line-height:1.9;}
+
+/* STRIPE: 배경 전체 너비 */
+.stripe-dark{background:#193b71;width:100%;}
+.stripe-mid{background:#274b77;width:100%;}
+
+/* INNER: 콘텐츠 1280px 고정, 양쪽은 배경색으로 채워짐 */
+.inner{max-width:1280px;margin:0 auto;padding:60px 48px;}
+.sec-title{font-family:'Cormorant Garamond',sans-serif;font-size:44px;letter-spacing:0.12em;font-weight:400;margin-bottom:32px;}
+
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;}
+.about-text{font-size:15px;line-height:2;color:rgba(255,255,255,0.72);}
+.about-img{border-radius:12px;overflow:hidden;height:280px;}
+.about-img img{width:100%;height:100%;object-fit:cover;display:block;}
+
+.svc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.svc-card{border:0.5px solid rgba(255,255,255,0.15);border-radius:12px;padding:24px 8px;text-align:center;font-size:13px;cursor:pointer;transition:background 0.2s,transform 0.2s;}
+.svc-card:hover{background:rgba(255,255,255,0.1);transform:translateY(-4px);}
+.svc-icon{font-size:24px;display:block;margin-bottom:10px;color:rgba(255,255,255,0.7);}
+
+.proj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.proj-card{border-radius:10px;overflow:hidden;position:relative;height:200px;cursor:pointer;}
+.proj-card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.5s;}
+.proj-card:hover img{transform:scale(1.05);}
+.proj-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.75),rgba(0,0,0,0.1));display:flex;align-items:flex-end;padding:10px;}
+.proj-label{font-size:14px;}
+.proj-sub{font-size:10px;color:#a8c4e8;letter-spacing:0.08em;}
+
+.contact-inner{text-align:center;}
+.contact-info{display:flex;flex-direction:column;gap:12px;font-size:15px;color:rgba(255,255,255,0.78);margin-top:8px;}
+.contact-row{display:flex;align-items:center;justify-content:center;gap:8px;}
+
+.overlay{display:none;position:fixed;inset:0;background:rgba(25,59,113,0.97);flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;z-index:200;}
+.overlay.on{display:flex;}
+.ov-label{font-size:11px;color:rgba(255,255,255,0.45);letter-spacing:0.15em;}
+.ov-title{font-family:'Cormorant Garamond',sans-serif;font-size:36px;letter-spacing:0.2em;}
+.ov-badge{background:rgba(255,255,255,0.08);border:0.5px solid rgba(255,255,255,0.2);border-radius:20px;padding:6px 18px;font-size:13px;color:rgba(255,255,255,0.6);}
+.ov-back{margin-top:4px;padding:8px 22px;border:0.5px solid rgba(255,255,255,0.3);border-radius:6px;background:transparent;color:white;font-size:12px;cursor:pointer;transition:background 0.2s;}
+.ov-back:hover{background:rgba(255,255,255,0.1);}
+</style>
 </head>
 <body>
-  <h1>Hello World! 🎉</h1>
-  <p>Vercel 배포 테스트 성공!</p>
-</body>
-</html>
+<div class="nav-wrap">
+  <div class="nav">
+    <div class="logo">MORAM SPACE</div>
+    <nav class="nav-links">
+      <a onclick="showOv('About')">About</a>
+      <a onclick="showOv('Service')">Service</a>
+      <a onclick="showOv('Projects')">Projects</a>
+      <a onclick="showOv('Contact')">Contact</a>
+    </nav>
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+  <nav class="mobile-menu" id="mobile-menu">
+    <a onclick="showOv('About');toggleMenu()">About</a>
+    <a onclick="showOv('Service');toggleMenu()">Service</a>
+    <a onclick="showOv('Projects');toggleMenu()">Projects</a>
+    <a onclick="showOv('Contact');toggleMenu()">Contact</a>
+  </nav>
+</div>
+<div class="hero">
+  <div class="hero-inner">
+    <p class="hero-sub">ARCHITECTURE · CONSTRUCTION · CONSULTING</p>
+    <h1 class="hero-title">MORAM SPACE</h1>
+    <div class="hero-line"></div>
+    <p class="hero-desc">사람이 모여 공간을 만들고,<br>공간이 다시 사람을 잇다</p>
+  </div>
+</div>
+<div class="stripe-dark"><div class="inner">
+  <h2 class="sec-title">About Us</h2>
+  <div class="about-grid">
+    <p class="about-text">건축은 사람으로 시작해 사람으로 완성됩니다.<br>모람공간은 건축주, 설계자, 시공자,<br>작업자 모두가 행복한 과정 속에서<br>가장 올바른 건축이 만들어진다고 믿습니다.</p>
+    <div class="about-img"><img src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=800&auto=format&fit=crop" alt="건축 이미지"></div>
+  </div>
+</div></div>
+<div class="stripe-mid"><div class="inner">
+  <h2 class="sec-title">Our Service</h2>
+  <div class="svc-grid">
+    <div class="svc-card" onclick="showOv('철거')"><i class="ti ti-bulldozer svc-icon"></i>철거</div>
+    <div class="svc-card" onclick="showOv('토목')"><i class="ti ti-road svc-icon"></i>토목</div>
+    <div class="svc-card" onclick="showOv('신축')"><i class="ti ti-building svc-icon"></i>신축</div>
+    <div class="svc-card" onclick="showOv('인테리어 리모델링')"><i class="ti ti-paint svc-icon"></i>인테리어 리모델링</div>
+    <div class="svc-card" onclick="showOv('건축 컨설팅')"><i class="ti ti-clipboard-list svc-icon"></i>건축 컨설팅</div>
+  </div>
+</div></div>
+<div class="stripe-dark"><div class="inner">
+  <h2 class="sec-title">Selected Projects</h2>
+  <div class="proj-grid">
+    <div class="proj-card" onclick="showOv('전원주택')"><img src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?q=80&w=600&auto=format&fit=crop" alt="전원주택"><div class="proj-ov"><div><div class="proj-label">전원주택</div><div class="proj-sub">MORAM SPACE PROJECT</div></div></div></div>
+    <div class="proj-card" onclick="showOv('다가구주택')"><img src="https://images.unsplash.com/photo-1460317442991-0ec209397118?q=80&w=600&auto=format&fit=crop" alt="다가구주택"><div class="proj-ov"><div><div class="proj-label">다가구주택</div><div class="proj-sub">MORAM SPACE PROJECT</div></div></div></div>
+    <div class="proj-card" onclick="showOv('근생시설')"><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600&auto=format&fit=crop" alt="근생시설"><div class="proj-ov"><div><div class="proj-label">근생시설</div><div class="proj-sub">MORAM SPACE PROJECT</div></div></div></div>
+    <div class="proj-card" onclick="showOv('한옥')"><img src="https://images.unsplash.com/photo-1517154421773-0529f29ea451?q=80&w=600&auto=format&fit=crop" alt="한옥"><div class="proj-ov"><div><div class="proj-label">한옥</div><div class="proj-sub">MORAM SPACE PROJECT</div></div></div></div>
+    <div class="proj-card" onclick="showOv('공장')"><img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=600&auto=format&fit=crop" alt="공장"><div class="proj-ov"><div><div class="proj-label">공장</div><div class="proj-sub">MORAM SPACE PROJECT</div></div></div></div>
+    <div class="proj-card" onclick="showOv('구조보강')"><img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=600&auto=format&fit=crop" alt="구조보강"><div class="proj-ov"><div><div class="proj-label">구조보강</div><div class="proj-sub">MORAM SPACE PROJECT</div></div></div></div>
+  </div>
+</div></div>
+<div class="stripe-mid"><div class="inner contact-inner">
+  <h2 class="sec-title">Contact</h2>
+  <div class="contact-info">
+    <div class="contact-row"><i class="ti ti-phone"></i><span>010-2860-5380</span></div>
+    <div class="contact-row"><i class="ti ti-map-pin"></i><span>경기도 광명시 시청로 152, 302호</span></div>
+    <div class="contact-row"><i class="ti ti-mail"></i><span>suram.choi@moram.space</span></div>
+    <div class="contact-row"><i class="ti ti-world"></i><span>www.moram.space</span></div>
+  </div>
+</div></div>
+<div class="overlay" id="overlay">
+  <p class="ov-label">MORAM SPACE</p>
+  <div class="ov-title" id="ov-title"></div>
+  <div class="ov-badge">준비 중입니다</div>
+  <p style="font-size:12px;color:rgba(255,255,255,0.4);">페이지를 준비하고 있습니다.</p>
+  <button class="ov-back" onclick="hideOv()">← 메인으로 돌아가기</button>
+</div>
+<script>
+function showOv(n){document.getElementById('ov-title').textContent=n;document.getElementById('overlay').classList.add('on');}
+function hideOv(){document.getElementById('overlay').classList.remove('on');}
+function toggleMenu(){document.getElementById('mobile-menu').classList.toggle('open');}
+</script>
+</body></html>
